@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Practice + Visualizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .visualization-area {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 500px;
+        }
+
+        .algorithm-selector {
+            margin-bottom: 25px;
+        }
+
+        .algorithm-selector h3 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 300px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .array-element {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            margin: 2px;
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            min-width: 30px;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .array-element.comparing {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            transform: scale(1.1);
+        }
+
+        .array-element.sorted {
+            background: linear-gradient(45deg, #a8edea, #fed6e3);
+        }
+
+        .array-element.pivot {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            transform: scale(1.2);
+        }
+
+        .complexity-info {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .complexity-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .problems-solved {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .problem-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .problem-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .easy { background: #52c41a; }
+        .medium { background: #faad14; }
+        .hard { background: #f5222d; }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DSA Practice + Visualizer</h1>
+            <p>Interactive Algorithm Visualization & Complexity Analysis</p>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="algorithm-selector">
+                    <h3>Algorithm Selection</h3>
+                    <select id="algorithmSelect">
+                        <option value="bubble">Bubble Sort</option>
+                        <option value="selection">Selection Sort</option>
+                        <option value="insertion">Insertion Sort</option>
+                        <option value="merge">Merge Sort</option>
+                        <option value="quick">Quick Sort</option>
+                        <option value="binary">Binary Search</option>
+                        <option value="linear">Linear Search</option>
+                    </select>
+                </div>
+
+                <div class="input-section">
+                    <h3>Array Configuration</h3>
+                    <input type="number" id="arraySize" placeholder="Array Size (5-50)" min="5" max="50" value="10">
+                    <input type="text" id="customArray" placeholder="Custom Array (e.g., 64,34,25,12,22)">
+                    <button onclick="generateArray()">Generate Random Array</button>
+                    <button onclick="setCustomArray()">Use Custom Array</button>
+                </div>
+
+                <div class="control-buttons">
+                    <h3>Controls</h3>
+                    <button id="startBtn" onclick="startVisualization()">Start Visualization</button>
+                    <button onclick="resetArray()">Reset Array</button>
+                    <input type="range" id="speedSlider" min="1" max="10" value="5" onchange="updateSpeed()">
+                    <label>Speed: <span id="speedValue">5</span></label>
+                </div>
+
+                <div class="complexity-info">
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-row">
+                        <span>Time Complexity:</span>
+                        <span id="timeComplexity">O(n²)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span>Space Complexity:</span>
+                        <span id="spaceComplexity">O(1)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span>Best Case:</span>
+                        <span id="bestCase">O(n)</span>
+                    </div>
+                    <div class="complexity-row">
+                        <span>Worst Case:</span>
+                        <span id="worstCase">O(n²)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visualization-area">
+                <h3>Algorithm Visualization</h3>
+                <div id="arrayContainer" class="array-container"></div>
+                <div id="algorithmStatus">Ready to visualize...</div>
+            </div>
+        </div>
+
+        <div class="stats-panel">
+            <h3>Performance Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="comparisons">0</div>
+                    <div>Comparisons</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="swaps">0</div>
+                    <div>Swaps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="executionTime">0</div>
+                    <div>Time (ms)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="arrayAccesses">0</div>
+                    <div>Array Accesses</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="problems-solved">
+            <h3>Problems Solved (75+ across platforms)</h3>
+            <div class="problem-list">
+                <div class="problem-card">
+                    <h4>Two Sum</h4>
+                    <span class="difficulty easy">Easy</span>
+                    <p>Array, Hash Table - O(n) solution</p>
+                </div>
+                <div class="problem-card">
+                    <h4>Merge Intervals</h4>
+                    <span class="difficulty medium">Medium</span>
+                    <p>Array, Sorting - Interval manipulation</p>
+                </div>
+                <div class="problem-card">
+                    <h4>Course Schedule</h4>
+                    <span class="difficulty medium">Medium</span>
+                    <p>Graph, DFS, Topological Sort</p>
+                </div>
+                <div class="problem-card">
+                    <h4>Climbing Stairs</h4>
+                    <span class="difficulty easy">Easy</span>
+                    <p>Dynamic Programming - Fibonacci variant</p>
+                </div>
+                <div class="problem-card">
+                    <h4>Longest Common Subsequence</h4>
+                    <span class="difficulty medium">Medium</span>
+                    <p>Dynamic Programming - 2D DP table</p>
+                </div>
+                <div class="problem-card">
+                    <h4>Word Ladder</h4>
+                    <span class="difficulty hard">Hard</span>
+                    <p>BFS, Graph Traversal - Shortest path</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let array = [];
+        let isRunning = false;
+        let animationSpeed = 500;
+        let stats = {
+            comparisons: 0,
+            swaps: 0,
+            arrayAccesses: 0,
+            startTime: 0
+        };
+
+        const complexities = {
+            bubble: { time: 'O(n²)', space: 'O(1)', best: 'O(n)', worst: 'O(n²)' },
+            selection: { time: 'O(n²)', space: 'O(1)', best: 'O(n²)', worst: 'O(n²)' },
+            insertion: { time: 'O(n²)', space: 'O(1)', best: 'O(n)', worst: 'O(n²)' },
+            merge: { time: 'O(n log n)', space: 'O(n)', best: 'O(n log n)', worst: 'O(n log n)' },
+            quick: { time: 'O(n log n)', space: 'O(log n)', best: 'O(n log n)', worst: 'O(n²)' },
+            binary: { time: 'O(log n)', space: 'O(1)', best: 'O(1)', worst: 'O(log n)' },
+            linear: { time: 'O(n)', space: 'O(1)', best: 'O(1)', worst: 'O(n)' }
+        };
+
+        function generateArray() {
+            const size = document.getElementById('arraySize').value || 10;
+            array = [];
+            for (let i = 0; i < size; i++) {
+                array.push(Math.floor(Math.random() * 200) + 10);
+            }
+            renderArray();
+            resetStats();
+        }
+
+        function setCustomArray() {
+            const customInput = document.getElementById('customArray').value;
+            if (customInput) {
+                array = customInput.split(',').map(num => parseInt(num.trim())).filter(num => !isNaN(num));
+                renderArray();
+                resetStats();
+            }
+        }
+
+        function renderArray() {
+            const container = document.getElementById('arrayContainer');
+            container.innerHTML = '';
+            
+            const maxValue = Math.max(...array);
+            
+            array.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                element.style.height = `${(value / maxValue) * 250}px`;
+                element.textContent = value;
+                element.id = `element-${index}`;
+                container.appendChild(element);
+            });
+        }
+
+        function updateComplexity() {
+            const algorithm = document.getElementById('algorithmSelect').value;
+            const complexity = complexities[algorithm];
+            
+            document.getElementById('timeComplexity').textContent = complexity.time;
+            document.getElementById('spaceComplexity').textContent = complexity.space;
+            document.getElementById('bestCase').textContent = complexity.best;
+            document.getElementById('worstCase').textContent = complexity.worst;
+        }
+
+        function updateSpeed() {
+            const speed = document.getElementById('speedSlider').value;
+            document.getElementById('speedValue').textContent = speed;
+            animationSpeed = 1100 - (speed * 100);
+        }
+
+        function resetStats() {
+            stats = { comparisons: 0, swaps: 0, arrayAccesses: 0, startTime: 0 };
+            document.getElementById('comparisons').textContent = '0';
+            document.getElementById('swaps').textContent = '0';
+            document.getElementById('executionTime').textContent = '0';
+            document.getElementById('arrayAccesses').textContent = '0';
+        }
+
+        function updateStats() {
+            document.getElementById('comparisons').textContent = stats.comparisons;
+            document.getElementById('swaps').textContent = stats.swaps;
+            document.getElementById('arrayAccesses').textContent = stats.arrayAccesses;
+            document.getElementById('executionTime').textContent = Date.now() - stats.startTime;
+        }
+
+        function highlightElements(indices, className = 'comparing') {
+            // Clear previous highlights
+            document.querySelectorAll('.array-element').forEach(el => {
+                el.classList.remove('comparing', 'sorted', 'pivot');
+            });
+            
+            indices.forEach(index => {
+                const element = document.getElementById(`element-${index}`);
+                if (element) {
+                    element.classList.add(className);
+                }
+            });
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function bubbleSort() {
+            const n = array.length;
+            for (let i = 0; i < n - 1; i++) {
+                for (let j = 0; j < n - i - 1; j++) {
+                    stats.comparisons++;
+                    stats.arrayAccesses += 2;
+                    highlightElements([j, j + 1]);
+                    updateStats();
+                    await sleep(animationSpeed);
+                    
+                    if (array[j] > array[j + 1]) {
+                        [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                        stats.swaps++;
+                        renderArray();
+                        updateStats();
+                        await sleep(animationSpeed);
+                    }
+                }
+                highlightElements([n - i - 1], 'sorted');
+            }
+            highlightElements([0], 'sorted');
+        }
+
+        async function selectionSort() {
+            const n = array.length;
+            for (let i = 0; i < n - 1; i++) {
+                let minIdx = i;
+                highlightElements([i], 'pivot');
+                
+                for (let j = i + 1; j < n; j++) {
+                    stats.comparisons++;
+                    stats.arrayAccesses += 2;
+                    highlightElements([minIdx, j]);
+                    updateStats();
+                    await sleep(animationSpeed);
+                    
+                    if (array[j] < array[minIdx]) {
+                        minIdx = j;
+                    }
+                }
+                
+                if (minIdx !== i) {
+                    [array[i], array[minIdx]] = [array[minIdx], array[i]];
+                    stats.swaps++;
+                    renderArray();
+                }
+                
+                highlightElements([i], 'sorted');
+                updateStats();
+                await sleep(animationSpeed);
+            }
+            highlightElements([n - 1], 'sorted');
+        }
+
+        async function insertionSort() {
+            const n = array.length;
+            for (let i = 1; i < n; i++) {
+                let key = array[i];
+                let j = i - 1;
+                
+                highlightElements([i], 'pivot');
+                await sleep(animationSpeed);
+                
+                while (j >= 0 && array[j] > key) {
+                    stats.comparisons++;
+                    stats.arrayAccesses += 2;
+                    highlightElements([j, j + 1]);
+                    updateStats();
+                    await sleep(animationSpeed);
+                    
+                    array[j + 1] = array[j];
+                    stats.swaps++;
+                    j--;
+                    renderArray();
+                }
+                
+                array[j + 1] = key;
+                renderArray();
+                updateStats();
+                await sleep(animationSpeed);
+            }
+        }
+
+        async function startVisualization() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            stats.startTime = Date.now();
+            
+            const algorithm = document.getElementById('algorithmSelect').value;
+            document.getElementById('algorithmStatus').textContent = `Running ${algorithm} sort...`;
+            
+            switch (algorithm) {
+                case 'bubble':
+                    await bubbleSort();
+                    break;
+                case 'selection':
+                    await selectionSort();
+                    break;
+                case 'insertion':
+                    await insertionSort();
+                    break;
+                default:
+                    await bubbleSort();
+            }
+            
+            document.getElementById('algorithmStatus').textContent = 'Sorting complete!';
+            document.getElementById('startBtn').disabled = false;
+            isRunning = false;
+        }
+
+        function resetArray() {
+            if (isRunning) return;
+            generateArray();
+            document.getElementById('algorithmStatus').textContent = 'Ready to visualize...';
+        }
+
+        // Event listeners
+        document.getElementById('algorithmSelect').addEventListener('change', updateComplexity);
+
+        // Initialize
+        generateArray();
+        updateComplexity();
+        updateSpeed();
+    </script>
+</body>
+</html>
